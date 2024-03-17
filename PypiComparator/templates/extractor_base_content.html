@@ -1,0 +1,13 @@
+
+{% load static%}
+<script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+<script src="{% static 'js/base_extractor.js' %}"></script>
+teste  {{ global_parameters.total_links_to_process_per_chunck }} fim teste
+{% csrf_token %}
+<br>
+<br>
+<button id="download-pypi-index-file"> Atualizar arquivo de simple index do Pypi</button>
+<br><br>
+<button id="process-pypi-index-file" data-url="{% url 'extract_urls_from_simple_index' %}"> Processar arquivo de simple index do Pypi para obter as urls de cada projeto pypi</button>
+<br><br>
+<button id="process-pypi-urls"> Processar urls do pypi para obter as urls de home page</button>
