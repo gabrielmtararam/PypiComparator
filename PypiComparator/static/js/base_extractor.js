@@ -1,50 +1,129 @@
+let chatSocket = null;
+let urlChatSocket = null;
+let spansLen = 0;
+let spansErrorsLen = 0;
+let spansErrorList = []
+
+let spansUrlsLen = 0;
+let spansUrlsErrorsLen = 0;
+let spansUrlsErrorList = []
+
 $(document).ready(function () {
     $("#process-pypi-index-file").click(function () {
         let url = $("#process-pypi-index-file").data("url")
-        console.log("url ",url)
-        let csrftoken = $("[name=csrfmiddlewaretoken]").val();
+        startProcessSimpleIndexWebSocket()
+    });
+    $("#send-message").click(function () {
+        sendMessage()
+    });
 
-        $.ajax({
-            url: url,
-            processData: false,
-            contentType: false,
-            type: 'GET',
-            data: {},
-            beforeSend: function (xhr, settings) {
-                // Insert CSRFToken in request
-                xhr.setRequestHeader("X-CSRFToken", csrftoken);
-            },
-            success: function (data) {
-                // // Add success text and color and show the alert message
-                // $("#alert-message").removeClass("alert-danger").addClass("alert-success");
-                // $("#alert-message p").text(successMessage);
-                // $("#alert-message").show();
-                // $("#alert-message").delay(5000).fadeOut('slow');
-                //
-                // // Hide the modal
-                // $("#modal-import").modal("hide");
-            },
-            error: function (e) {
-                // if (e?.responseJSON?.redirect) {
-                //     window.location.replace(e.responseJSON.location + window.location.pathname);
-                // }
-                // else {
-                //     // Add error text and color and show the alert message
-                //     $("#alert-message").removeClass("alert-success").addClass("alert-danger");
-                //     if (e.readyState == 0) {
-                //         $("#alert-message p").text(gettext("CLEM4"));
-                //     }
-                //     else {
-                //         $("#alert-message p").html(e.responseJSON);
-                //     }
-                //     $("#alert-message").show();
-                //     $("#alert-message").delay(DEFAULT_DELAY).fadeOut('slow');
-                //
-                //     // Hide the modal
-                //     $("#modal-import").modal("hide");
-                // }
-            }
-        })
+    $("#stop-simple-index-processing").click(function () {
+        stopSimpleIndexProcessing()
+    });
+
+
+    $("#process-pypi-urls").click(function () {
+        let url = $("#process-pypi-index-file").data("url")
+        startProcessPypiUrlsWebSocket()
+    });
+    $("#stop-process-pypi-urls").click(function () {
+        stopProcessPypiUrls()
     });
 
 });
+
+
+function startProcessPypiUrlsWebSocket() {
+    console.log("startProcessPypiUrlsWebSocket")
+    spansUrlsErrorsLen = 0;
+    spansUrlsLen = 0;
+    $("#process-pypi-urls-messages>.content").html("")
+    let url = `ws://${window.location.host}/ws/process-urls/`
+    // if (chatSocket) {
+    //     chatSocket.close()
+    //     stopSimpleIndexProcessing()
+    // }
+    urlChatSocket = new WebSocket(url)
+    console.log("WebSocket urlChatSocket ",url)
+    urlChatSocket.onmessage = function (e) {
+        let data = JSON.parse(e.data)
+        console.log("WebSocketzzzzzzzzzz data ", data)
+        if (data['message'] === 'started_socket_sucessefuly') {
+            urlChatSocket.send(JSON.stringify({
+                'message': "start_processing_simple_index_url"
+            }))
+        }
+        let new_span_message = $('<span />').addClass(`message-${data['type']}`).html(data['message']);
+
+        $("#process-pypi-urls-messages>.content").append(new_span_message)
+        spansUrlsLen += 1;
+
+        $("#process-pypi-urls-span-len").html(`Qtd links processados ${spansUrlsLen}`)
+        $("#process-pypi-urls-span-error-len").html(`Qtd links processados com erro ${spansErrorsLen}`)
+
+    }
+
+
+}
+
+function stopProcessPypiUrls() {
+    console.log("stop processing")
+    urlChatSocket.send(JSON.stringify({
+        'message': "stop_processing_simple_index_url"
+    }))
+}
+
+
+function sendMessage() {
+    console.log("send message")
+    chatSocket.send(JSON.stringify({
+        'message': "teste"
+    }))
+}
+
+function stopSimpleIndexProcessing() {
+    console.log("stop processing")
+    chatSocket.send(JSON.stringify({
+        'message': "stop_processing_simple_index"
+    }))
+}
+
+function startProcessSimpleIndexWebSocket() {
+    spansErrorsLen = 0;
+    spansLen = 0;
+    $("#simple-index-processing-messages>.content").html("")
+    let url = `ws://${window.location.host}/ws/socket-server/`
+    if (chatSocket) {
+        chatSocket.close()
+        stopSimpleIndexProcessing()
+    }
+    chatSocket = new WebSocket(url)
+
+    chatSocket.onmessage = function (e) {
+        let data = JSON.parse(e.data)
+
+        if (data['message'] === 'started_socket_sucessefuly') {
+            chatSocket.send(JSON.stringify({
+                'message': "start_processing_simple_index"
+            }))
+        }
+        if (data['type'] === 'error') {
+            spansErrorsLen += 1;
+            let new_span_message = $('<span />').addClass(`message-${data['type']}`).html(data['message']);
+
+            spansErrorList.push(new_span_message)
+            $("#simple-index-processing-messages>.content").append(new_span_message)
+            if (spansErrorsLen > 100) {
+                for (var i = 100; i < spansErrorList.length; i++) {
+                    $("#simple-index-processing-messages>.content").removeChild(spansErrorList.shift());
+                }
+            }
+        }
+        spansLen += 1;
+        $("#span-len").html(`Qtd links processados ${spansLen}`)
+        $("#span-error-len").html(`Qtd links processados com erro ${spansErrorsLen}`)
+
+    }
+
+
+}

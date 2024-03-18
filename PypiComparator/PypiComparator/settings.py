@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'extractor',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "djangoql",
     "rest_framework",
+    "channels"
 ]
 
 MIDDLEWARE = [
@@ -71,8 +73,12 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'PypiComparator.wsgi.application'
-
+ASGI_APPLICATION = 'PypiComparator.asgi.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases

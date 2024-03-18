@@ -22,5 +22,5 @@ from django.contrib import admin
 from django.urls import path, include
 urlpatterns = [
     path('', HomeExtractor.as_view(), name='stractor'),
-    path('/extract-urls-from-simple-index', SimpleIndexExtractor.as_view(), name='extract_urls_from_simple_index'),
+    path('extract-urls-from-simple-index', SimpleIndexExtractor.as_view(), name='extract_urls_from_simple_index'),
 ]

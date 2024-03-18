@@ -2,6 +2,7 @@
 {% load static%}
 <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
 <script src="{% static 'js/base_extractor.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}"/>
 teste  {{ global_parameters.total_links_to_process_per_chunck }} fim teste
 {% csrf_token %}
 <br>
@@ -9,5 +10,26 @@ teste  {{ global_parameters.total_links_to_process_per_chunck }} fim teste
 <button id="download-pypi-index-file"> Atualizar arquivo de simple index do Pypi</button>
 <br><br>
 <button id="process-pypi-index-file" data-url="{% url 'extract_urls_from_simple_index' %}"> Processar arquivo de simple index do Pypi para obter as urls de cada projeto pypi</button>
+<button id="stop-simple-index-processing">stop-simple-index-processing</button>
+<br>
+<div id="simple-index-processing-messages">
+    <span id="span-len"></span>
+    <span id="span-error-len"></span>
+    <div class="content">
+asdadsasda
+    </div>
+</div>
 <br><br>
 <button id="process-pypi-urls"> Processar urls do pypi para obter as urls de home page</button>
+<button id="stop-process-pypi-urls">stop-simple-index-processing</button>
+<br>
+<div id="process-pypi-urls-messages">
+    <span id="process-pypi-urls-span-len"></span>
+    <span id="process-pypi-urls-span-error-len"></span>
+    <div class="content">
+asdadsasda
+    </div>
+</div>
+<br><br>
+<button id="send-message">send message</button>
+<button id="send-message">send message</button>

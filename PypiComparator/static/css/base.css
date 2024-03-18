@@ -1,0 +1,30 @@
+.message-success {
+    background-color: rgba(0, 128, 0, 0.65);
+    width: 100%;
+    display: inline-block;
+    color: white;
+    padding: 5px;
+}
+
+.message-error {
+    background-color: rgba(255, 0, 0, 0.75);
+    width: 100%;
+    display: inline-block;
+    color: white;
+    padding: 5px;
+}
+
+.message-warning {
+    background-color: rgba(255, 165, 0, 0.66);
+    width: 100%;
+    display: inline-block;
+    color: white;
+    padding: 5px;
+}
+
+#simple-index-processing-messages > .content {
+    max-height: 300px;
+    min-height: 50px;
+    background-color: rgba(13, 17, 61, 0.32);
+    overflow: auto;
+}
