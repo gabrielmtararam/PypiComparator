@@ -38,9 +38,9 @@ class PypiSimpleIndexLinks(BaseModel):
     This model doesn't need to have a screen in admin.
     """
 
-    href = models.CharField(_("href"), help_text=_("href"), max_length=256, blank=False)
-    pypi_project_url = models.CharField(_("pypi_project_url"), help_text=_("pypi_project_url"), max_length=256, blank=True)
-    processed_message = models.CharField(_("processed_message"), help_text=_("processed_message"), max_length=256, blank=True)
+    href = models.CharField(_("href"), help_text=_("href"), max_length=512, blank=False)
+    pypi_project_url = models.CharField(_("pypi_project_url"), help_text=_("pypi_project_url"), max_length=512, blank=True)
+    processed_message = models.CharField(_("processed_message"), help_text=_("processed_message"), max_length=512, blank=True)
     processed = models.BooleanField(_("processed"), default=False, help_text=_("processed"))
     successful_processed = models.BooleanField(_("successful_processed"), default=False, help_text=_("successful_processed"))
     home_page_found = models.BooleanField(_("home_page_found"), default=False, help_text=_("home_page_found"))
@@ -57,4 +57,49 @@ class PypiProcessedLink(BaseModel):
         help_text=_("simple_index"),
         on_delete=models.DO_NOTHING,
     )
-    homepage_link = models.CharField(_("homepage_link"), help_text=_("homepage_link"), max_length=256, blank=False)
+    homepage_link = models.CharField(_("homepage_link"), help_text=_("homepage_link"), max_length=512, blank=True, null=True)
+    github_link = models.CharField(_("github_link"), help_text=_("github_link"), max_length=512, blank=True, null=True)
+
+
+
+class PyPiFlapyIndexLinks(BaseModel):
+    """Project Base Parameter model.
+
+    This model doesn't need to have a screen in admin.
+    """
+
+    url = models.CharField(_("url"), help_text=_("url"), max_length=512, blank=False)
+    name = models.CharField(_("name"), help_text=_("name"), max_length=512, blank=True)
+
+
+class ALIndexLinks(BaseModel):
+    """Project Base Parameter model.
+
+    This model doesn't need to have a screen in admin.
+    """
+    flapy_link = models.ForeignKey(
+        PyPiFlapyIndexLinks,
+        verbose_name=_("flapy_link"),
+        help_text=_("flapy_link"),
+        on_delete=models.DO_NOTHING,
+        related_name="al_link",
+        blank=True,
+        null=True
+    )
+    similar_flapy_link = models.ForeignKey(
+        PyPiFlapyIndexLinks,
+        verbose_name=_("similar_flapy_link"),
+        help_text=_("similar_flapy_link"),
+        on_delete=models.DO_NOTHING,
+        related_name="similar_al_link",
+        blank=True,
+        null=True
+    )
+    url = models.CharField(_("url"), help_text=_("url"), max_length=512, blank=False)
+    is_a_project = models.BooleanField(_("is_a_project"), default=False, help_text=_("is_a_project"), blank=True,
+                                             null=True)
+    can_run_flapy = models.BooleanField(_("can_run_flapy"), default=False, help_text=_("can_run_flapy"), blank=True,
+                                             null=True)
+    processed_by_flapy_message = models.CharField(_("processed_message"), help_text=_("processed_message"), max_length=512, blank=True, null=True)
+    short_description = models.CharField(_("short_description"), help_text=_("short_description"), max_length=512, blank=True, null=True)
+    processed_by_flapy = models.BooleanField(_("processed"), default=False, help_text=_("processed"), blank=True, null=True)

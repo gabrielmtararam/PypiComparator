@@ -27,3 +27,23 @@ class GlobalProcessorParametersForm(forms.ModelForm):
         fields = '__all__'
 
 
+
+
+
+class PyPiFlapyIndexLinksForm(forms.ModelForm):
+    """StationCodeType model admin form."""
+
+    class Meta(object):  # NOQA
+        model = mod.PyPiFlapyIndexLinks
+        fields = '__all__'
+
+
+
+class ALIndexLinksForm(forms.ModelForm):
+    """StationCodeType model admin form."""
+
+    class Meta(object):  # NOQA
+        model = mod.ALIndexLinks
+        fields = '__all__'
+
+

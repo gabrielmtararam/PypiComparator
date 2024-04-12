@@ -21,7 +21,12 @@ from extractor.models import GlobalProcessorParameters
 
 from extractor.models import PypiProcessedLink
 
+from extractor.models import PyPiFlapyIndexLinks
+from extractor.models import ALIndexLinks
+
 diretorio_atual = os.path.dirname(__file__)
+
+import csv
 
 
 class SimpleIndexProcessorHandler():
@@ -62,7 +67,6 @@ class SimpleIndexProcessorHandler():
 
             # Abre o arquivo HTML e conta os links
             stop = False
-            print(f"start_processing folder")
             with open(pasta_destino, 'r') as html_file:
                 soup = BeautifulSoup(html_file, 'html.parser')
                 links = soup.find_all('a', href=True)
@@ -95,20 +99,31 @@ class SimpleIndexUrlProcessorHandler():
 
     @staticmethod
     async def process_links(project_link):
-
         response_link = requests.get(project_link)
 
         if response_link.status_code == 200:
             soup_link = BeautifulSoup(response_link.content, 'html.parser')
-
+            link_homepage = None
+            link_github = None
+            success = False
             # Verifica se a página contém o ícone 'fas fa-home'
-            icone = soup_link.find('i', class_='fas fa-home')
-            if icone:
-                link_homepage = icone.find_parent('a', href=True)
-                return {'message': f"link processado com sucesso {str(link_homepage['href'])}", 'level': 'success'},False,link_homepage['href']
-            return {'message': f"home page não encontrada  {project_link}", 'level': 'error'},True,None
+            icone_home = soup_link.find('i', class_='fas fa-home')
+            icone_github = soup_link.find('i', class_='fab fa-github')
+            if icone_home:
+                success = True
+                link_homepage = icone_home.find_parent('a', href=True)
+                link_homepage = link_homepage['href']
+            if icone_github:
+                success = True
+                link_github = icone_github.find_parent('a', href=True)
+                link_github = link_github['href']
+            if success:
+                return {
+                    'message': f"link processado com sucesso {link_homepage} link_github {link_github}  projeto: {project_link} ",
+                    'level': 'success'}, False, link_homepage, link_github
+            return {'message': f"home page não encontrada  {project_link}", 'level': 'error'}, True, None, None
         else:
-            return {'message': f"link do projeto não encontrado  {project_link}", 'level': 'error'},False,None
+            return {'message': f"link do projeto não encontrado  {project_link}", 'level': 'error'}, False, None, None
 
         # url_base = 'https://pypi.org/project/'
         #
@@ -138,12 +153,13 @@ class SimpleIndexUrlProcessorHandler():
 
     @staticmethod
     @sync_to_async
-    def create_processed_link(simple_index_link, link_homepage ):
+    def create_processed_link(simple_index_link, link_homepage, link_github):
         first_global_paramenter = PypiProcessedLink.objects.filter(simple_index=simple_index_link)
         if not first_global_paramenter.exists():
-             PypiProcessedLink.objects.create(
+            PypiProcessedLink.objects.create(
                 simple_index=simple_index_link,
                 homepage_link=link_homepage,
+                github_link=link_github
             )
 
     @staticmethod
@@ -157,14 +173,14 @@ class SimpleIndexUrlProcessorHandler():
             # simple_index_records = await sync_to_async(simple_index_records)
             # print("simple_index_records ", simple_index_records)
             link_homepage = None
+            link_github = None
             simple_index_records = await SimpleIndexUrlProcessorHandler.get_links()
             contador_links = 0
             for simple_index_link in simple_index_records:
                 if simple_index_link.pypi_project_url:
                     contador_links += 1
-                    message_data,home_page_not_found,link_homepage = await SimpleIndexUrlProcessorHandler.process_links(
+                    message_data, home_page_not_found, link_homepage, link_github = await SimpleIndexUrlProcessorHandler.process_links(
                         simple_index_link.pypi_project_url)
-                    print("message_data ", message_data)
                     simple_index_link.home_page_found = not home_page_not_found
                     # check_pypi_homepage_link(link)
                 else:
@@ -178,7 +194,7 @@ class SimpleIndexUrlProcessorHandler():
                     simple_index_link.processed_message = message_data['message']
                     simple_index_link.successful_processed = True
                     await SimpleIndexUrlProcessorHandler.create_processed_link(
-                        simple_index_link, link_homepage)
+                        simple_index_link, link_homepage, link_github)
 
                 # if contador_links > 125:
                 #     break
@@ -188,7 +204,6 @@ class SimpleIndexUrlProcessorHandler():
                 if SimpleIndexUrlProcessorHandler.stop_processing:
                     break
 
-                print(f'Total de links processados, com o url do projeto: {contador_links}')
             await queue.put({'message': f"Total de links processados com sucesso {contador_links}", 'level': 'error'})
             return
 
@@ -217,6 +232,92 @@ class SimpleIndexUrlExtractorConsumer(AsyncWebsocketConsumer):
             asyncio.create_task(self.process_messages())
         elif message == "stop_processing_simple_index_url":
             SimpleIndexUrlProcessorHandler.stop_processing = True
+
+    async def send_feedback_message(self, message):
+        await self.send(text_data=json.dumps({
+            'type': 'success',
+            'message': message
+        }))
+
+    async def send_feedback_message_level(self, message):
+        # print("message ",message)
+        await self.send(text_data=json.dumps({
+            'type': message['level'],
+            'message': message['message']
+        }))
+
+
+class ALProcessorHandler():
+    stop_processing = False
+    processing = False
+    index_processor_websocket = None
+    index_processor_websocket_queue = None
+
+    @staticmethod
+    async def create_pypi_record(link, name):
+
+        old_instance = await sync_to_async(PyPiFlapyIndexLinks.objects.filter)(url=link)
+        old_instance = await sync_to_async(old_instance.exists)()
+        if not old_instance:
+            await PyPiFlapyIndexLinks.objects.acreate(
+                url=link,
+                name=name,
+            )
+            return {'message': f"link cadastrado com sucesso {link}", 'level': 'success'}
+        else:
+            return {'message': f"link já cadastrado {link}", 'level': 'warning'}
+
+    @staticmethod
+    async def start_processing(queue):
+        ALProcessorHandler.index_processor_websocket_queue = queue
+        if not ALProcessorHandler.processing:
+            pipy_urls_file = os.path.join(settings.BASE_DIR, "extractor/extracted_files/flapy_projects.csv")
+
+            stop = False
+            with open(pipy_urls_file, newline='') as csvfile:
+                csv_reader = csv.reader(csvfile)
+                link_count = 0
+                for row in csv_reader:
+                    name, link, _ = row
+                    if link.startswith('http'):
+                        message_data = await ALProcessorHandler.create_pypi_record(link, name)
+                    else:
+                        message_data = {'message': f"link invalido {link}", 'level': 'error'}
+                    link_count += 1
+                    await queue.put(message_data)
+
+                    if ALProcessorHandler.stop_processing:
+                        break
+
+                print(f'Total de links no formato especificado: {link_count}')
+            await queue.put({'message': f"todos os links cadastrados com sucesso {link_count}", 'level': 'error'})
+            return
+
+
+class ALUrlExtractorConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        self.queue = Queue()
+        self.stop_processing = False
+
+        await self.accept()
+        await self.send(text_data=json.dumps({
+            'type': 'feedback_message_value',
+            'message': "started_socket_sucessefuly"
+        }))
+
+    async def process_messages(self):
+        asyncio.create_task(ALProcessorHandler.start_processing(self.queue))
+        while True:
+            message = await self.queue.get()
+            await self.send_feedback_message_level(message)
+
+    async def receive(self, text_data):
+        text_data_json = json.loads(text_data)
+        message = text_data_json['message']
+        if message == "start_processing_al":
+            asyncio.create_task(self.process_messages())
+        elif message == "stop_processing_al":
+            ALProcessorHandler.stop_processing = True
 
     async def send_feedback_message(self, message):
         await self.send(text_data=json.dumps({

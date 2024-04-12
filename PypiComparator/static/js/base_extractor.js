@@ -1,6 +1,7 @@
 let chatSocket = null;
 let urlChatSocket = null;
 let spansLen = 0;
+let spansTotalLen = 0;
 let spansErrorsLen = 0;
 let spansErrorList = []
 
@@ -37,6 +38,7 @@ function startProcessPypiUrlsWebSocket() {
     console.log("startProcessPypiUrlsWebSocket")
     spansUrlsErrorsLen = 0;
     spansUrlsLen = 0;
+    spansTotalLen = 0;
     $("#process-pypi-urls-messages>.content").html("")
     let url = `ws://${window.location.host}/ws/process-urls/`
     // if (chatSocket) {
@@ -47,18 +49,24 @@ function startProcessPypiUrlsWebSocket() {
     console.log("WebSocket urlChatSocket ",url)
     urlChatSocket.onmessage = function (e) {
         let data = JSON.parse(e.data)
-        console.log("WebSocketzzzzzzzzzz data ", data)
         if (data['message'] === 'started_socket_sucessefuly') {
             urlChatSocket.send(JSON.stringify({
                 'message': "start_processing_simple_index_url"
             }))
         }
         let new_span_message = $('<span />').addClass(`message-${data['type']}`).html(data['message']);
-
+        if (data['type'] === 'error') {
+            spansErrorsLen += 1;
+        }
         $("#process-pypi-urls-messages>.content").append(new_span_message)
         spansUrlsLen += 1;
+        spansTotalLen += 1;
+        if (spansUrlsLen>400){
+            spansUrlsLen = 0;
+             $("#process-pypi-urls-messages>.content").html("")
+        }
 
-        $("#process-pypi-urls-span-len").html(`Qtd links processados ${spansUrlsLen}`)
+        $("#process-pypi-urls-span-len").html(`Qtd links processados ${spansTotalLen}`)
         $("#process-pypi-urls-span-error-len").html(`Qtd links processados com erro ${spansErrorsLen}`)
 
     }
@@ -91,6 +99,7 @@ function stopSimpleIndexProcessing() {
 function startProcessSimpleIndexWebSocket() {
     spansErrorsLen = 0;
     spansLen = 0;
+    spansTotalLen = 0;
     $("#simple-index-processing-messages>.content").html("")
     let url = `ws://${window.location.host}/ws/socket-server/`
     if (chatSocket) {
@@ -109,6 +118,7 @@ function startProcessSimpleIndexWebSocket() {
         }
         if (data['type'] === 'error') {
             spansErrorsLen += 1;
+            spansTotalLen += 1;
             let new_span_message = $('<span />').addClass(`message-${data['type']}`).html(data['message']);
 
             spansErrorList.push(new_span_message)
