@@ -1,0 +1,32 @@
+{% load static %}
+{% csrf_token %}
+<script src="{% static 'js/base-al-flapy-process.js' %}"></script>
+<br>
+<p>
+    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#al-flapy-list-collapse"
+            aria-expanded="false" aria-controls="al-flapy-list-collapse">
+        Awsome list process with Flapy
+    </button>
+</p><br>
+<div class="collapse" id="al-flapy-list-collapse">
+    <div class="card card-body">
+        <button data-url="{% url 'download_al_flapy_list' %}" id="download-al-flapy-list"> Baixar lista de projetos AL que serão processados</button>
+        <button data-url="{% url 'download_al_flapy_csv' %}" id="download-al-flapy-csv"> Baixar csv executavel dos projetos AL que serão processados</button>
+        <button  id="update-al-flapy-process"> Atualizar lista de projetos AL que serão processados</button>
+        <br>
+        <br>
+        <button  id="check-al-flapy-process"> Gerar log dos pacotes com FLAPY</button>
+        <button data-url="{% url 'check_al_flapy_process_by_log' %}" id="check-al-flapy-process-by-log"> Verificar pacotes que rodam no FLAPY</button>
+        <div id="check-flapy-process-collapse-messages">
+            <span id="span-len"></span>
+            <span id="span-error-len"></span>
+            <div class="content">
+                ...
+            </div>
+        </div>
+        <br><br>
+
+    </div>
+</div>
+
+

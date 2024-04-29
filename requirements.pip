@@ -7,3 +7,4 @@ djangoql==0.18.1
 django-simple-history==3.5.0
 channels
 daphne
+gitpython

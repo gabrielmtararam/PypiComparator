@@ -87,8 +87,8 @@ DATABASES = {
     "default": {
         "ENGINE": "django.contrib.gis.db.backends.postgis",
         "NAME": "pypi_comparator",
-        "USER": "climatos_demo_dev",
-        "PASSWORD": "simepar",
+        "USER": "aaa",
+        "PASSWORD": "aaaa",
         "HOST": "localhost",
         "PORT": "5432",
         # This value was previously 60*10

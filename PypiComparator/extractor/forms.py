@@ -47,3 +47,12 @@ class ALIndexLinksForm(forms.ModelForm):
         fields = '__all__'
 
 
+
+class ALIndexLinksAnalysisForm(forms.ModelForm):
+    """StationCodeType model admin form."""
+
+    class Meta(object):  # NOQA
+        model = mod.ALIndexLinksAnalysis
+        fields = '__all__'
+
+
