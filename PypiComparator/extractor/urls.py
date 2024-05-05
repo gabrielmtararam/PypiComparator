@@ -16,7 +16,7 @@ Including another URLconf
 """
 
 
-from .views import HomeExtractor, SimpleIndexExtractor, DownloadALFlapyList, DownloadALFlapyCSV,CheckAlFlapyProcessByLog
+from .views import HomeExtractor, SimpleIndexExtractor, DownloadALFlapyList, DownloadALFlapyCSV,CheckAlFlapyProcessByLog,CheckAlFlapyProcessByLog400
 
 from django.contrib import admin
 from django.urls import path, include
@@ -26,4 +26,5 @@ urlpatterns = [
     path('download-al-flapy-list', DownloadALFlapyList.as_view(), name='download_al_flapy_list'),
     path('download-al-flapy-csv', DownloadALFlapyCSV.as_view(), name='download_al_flapy_csv'),
     path('check-al-flapy-process-by-log', CheckAlFlapyProcessByLog.as_view(), name='check_al_flapy_process_by_log'),
+    path('check-al-flapy-process-by-log-400', CheckAlFlapyProcessByLog400.as_view(), name='check_al_flapy_process_by_log_400'),
 ]

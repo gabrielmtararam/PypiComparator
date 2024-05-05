@@ -104,6 +104,7 @@ class ALIndexLinks(BaseModel):
     processed_by_flapy_message = models.CharField(_("processed_message"), help_text=_("processed_message"), max_length=512, blank=True, null=True)
     short_description = models.CharField(_("short_description"), help_text=_("short_description"), max_length=512, blank=True, null=True)
     processed_by_flapy = models.BooleanField(_("processed"), default=False, help_text=_("processed"), blank=True, null=True)
+    processed_by_flapy_400 = models.BooleanField(_("processed_by_flapy_400"), default=False, help_text=_("processed_by_flapy_400"), blank=True, null=True)
 
 class ALIndexLinksAnalysis(BaseModel):
     """Project Base Parameter model.
@@ -136,3 +137,4 @@ class ALIndexLinksAnalysis(BaseModel):
     processed_by_flapy_message = models.CharField(_("processed_message"), help_text=_("processed_message"), max_length=512, blank=True, null=True)
     short_description = models.CharField(_("short_description"), help_text=_("short_description"), max_length=512, blank=True, null=True)
     processed_by_flapy = models.BooleanField(_("processed"), default=False, help_text=_("processed"), blank=True, null=True)
+    processed_by_flapy_400 = models.BooleanField(_("processed_by_flapy_400"), default=False, help_text=_("processed_by_flapy_400"), blank=True, null=True)

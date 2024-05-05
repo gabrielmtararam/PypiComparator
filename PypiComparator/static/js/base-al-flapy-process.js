@@ -22,6 +22,10 @@ $(document).ready(function () {
         checkAlFlapyProcessByLog()
     });
 
+    $("#check-al-flapy-process-by-log-400").click(function () {
+        checkAlFlapyProcessByLog400()
+    });
+
 });
 
 function downloadALFlapyList() {
@@ -61,6 +65,23 @@ function checkAlFlapyProcessByLog() {
         type: 'GET',
         success: function (response) {
             console.log("responder ",response)
+            // var blob = new Blob([response]);
+            // var link = document.createElement('a');
+            // link.href = window.URL.createObjectURL(blob);
+            // link.download = 'custom_flapy_teste.csv';
+            // link.click();
+        }
+    });
+}
+
+
+function checkAlFlapyProcessByLog400() {
+    let url = $("#check-al-flapy-process-by-log-400").data("url");
+    $.ajax({
+        url: url,  // Substitua pela URL da sua view Django
+        type: 'GET',
+        success: function (response) {
+            console.log("response ",response)
             // var blob = new Blob([response]);
             // var link = document.createElement('a');
             // link.href = window.URL.createObjectURL(blob);
