@@ -100,6 +100,8 @@ class CheckAlFlapyProcessByLog(APIView):
             "processed_by_flapy": True,
         }
         al_filtered = ALIndexLinksAnalysis.objects.filter(** al_query)
+        runnable_packages_count = 0
+
         for package in al_filtered:
             folder_name = package.url.replace('/', '').replace('-', '').replace('.', '').replace(':', '')
             base_dir = str(settings.BASE_DIR)
@@ -113,16 +115,16 @@ class CheckAlFlapyProcessByLog(APIView):
             find_done = False
             if log_file_exists:
                 with open(log_file, 'r') as log_file_instance:
-                    # Lê cada linha do arquivo
                     for single_line in log_file_instance:
-                        # Verifica se a linha contém '========='
                         # if '=========' in single_line:
                         if ' passed ' in single_line:
                             has_passed_test = True
+                            runnable_packages_count += 1
                             print(f"{single_line.strip()} {package.url}")
                         if find_done:
                             if single_line.startswith(','):
                                 # print(f"{single_line.strip()} {package.url}")
+                                # runnable_packages_count+=1
                                 load_csv = True
                             find_done = False
                         if 'Done' in single_line:
@@ -130,8 +132,9 @@ class CheckAlFlapyProcessByLog(APIView):
                             # print(f"{single_line.strip()} {package.url}")
                         if load_csv and has_passed_test:
                             csv_log += single_line
-                        #     csv_log += single_line
-                    # print(f"csv_log \n {csv_log} {package.url} \n")
+                    # if load_csv and has_passed_test:
+                    #     print(f"csv_log \n {csv_log} {package.url} \n")
+        print(f"runnable_packages_count {runnable_packages_count}")
         # response = HttpResponse(content_type='text/csv')
         # response['Content-Disposition'] = 'attachment; filename="dados.csv"'
 
