@@ -152,8 +152,9 @@ class ALIndexLinksAnalysisAdmin(DjangoQLSearchMixin, SimpleHistoryAdmin):
         "processed_by_flapy",
         "short_description",
         "can_run_flapy",
+        "processed_by_flapy_400",
     )
-    list_editable = ['is_a_project', 'short_description', 'can_run_flapy', 'processed_by_flapy']
+    list_editable = ['is_a_project', 'short_description', 'processed_by_flapy_400', 'can_run_flapy', 'processed_by_flapy']
     # autocomplete_fields = (
     #     "code_type",
     #     "station",

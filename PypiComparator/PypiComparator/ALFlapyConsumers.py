@@ -86,7 +86,8 @@ class CheckAlFlapyProcessHandler():
             await sync_to_async(print)("\n#######iniciando bash")
 
             # comando_terminal = f"gnome-terminal -- bash -c '{bash_file_dir} >> {log_file} && rm -rf {package_folder_dir}; exit'"
-            comando_terminal = f"gnome-terminal -- bash -c '{bash_file_dir} >> {log_file} && rm -rf {package_folder_dir} && rm -rf results/example_results_{folder_name}; exit'"
+            comando_terminal = f"touch {log_file} && " \
+                               f"gnome-terminal -- bash -c '{bash_file_dir} >> {log_file} && rm -rf {package_folder_dir} && rm -rf results/example_results_{folder_name}; exit'"
             await sync_to_async(print)(comando_terminal)
 
             subprocess.run(comando_terminal, shell=True)
@@ -148,10 +149,10 @@ class CheckAlFlapyProcessHandler():
             await sync_to_async(print)(e)
 
     @staticmethod
-    async def create_bash_file(bash_file_dir, output_folder, folder_name):
+    async def create_bash_file(bash_file_dir, output_folder, folder_name, flapy_dir):
         try:
-            bash_command = f"./flapy.sh run --out-dir results/example_results_{folder_name} {output_folder} 1  && " \
-                           f"./flapy.sh parse ResultsDirCollection --path results/example_results_{folder_name} get_tests_overview _df to_csv --index=false"
+            bash_command = f" {flapy_dir}/flapy.sh run --out-dir {flapy_dir}/results/example_results_{folder_name} {output_folder} 1  && " \
+                           f" {flapy_dir}/flapy.sh parse ResultsDirCollection --path {flapy_dir}/example_results_{folder_name} get_tests_overview _df to_csv --index=false"
 
             bash_file_dir_exists = await sync_to_async(os.path.exists)(bash_file_dir)
             if bash_file_dir_exists:
@@ -170,7 +171,7 @@ class CheckAlFlapyProcessHandler():
     async def start_processing(queue):
         await sync_to_async(print)("start processing")
         CheckAlFlapyProcessHandler.index_processor_websocket_queue = queue
-        flapy_github_url = "https://github.com/se2p/FlaPy"
+        flapy_github_url = "https://github.com/gabrielmtararam/FlaPy-custom"
         base_dir = await sync_to_async(str)(settings.BASE_DIR)
         flapy_dir = base_dir + "/repositories/flapy"
         rep_dir = base_dir + "/repositories/"
@@ -212,7 +213,7 @@ class CheckAlFlapyProcessHandler():
                 package_folder_dir = rep_dir + folder_name + ""
 
                 log_file = flapy_dir + "/log/"+folder_name+".txt"
-                await CheckAlFlapyProcessHandler.create_bash_file(bash_file_dir, output_folder, folder_name)
+                await CheckAlFlapyProcessHandler.create_bash_file(bash_file_dir, output_folder, folder_name, flapy_dir)
 
                 print_value = f"count {package.url} package_folder_dir  {package_folder_dir}"
                 await sync_to_async(print)(print_value)

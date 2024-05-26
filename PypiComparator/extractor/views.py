@@ -233,7 +233,7 @@ class CheckAlFlapyProcessByLog400(APIView):
     @staticmethod
     def create_bash_file(bash_file_dir, output_folder, folder_name):
         try:
-            bash_command = f"./flapy.sh run --out-dir results/example_results_{folder_name} --plus-random-runs {output_folder} 400  && " \
+            bash_command = f"./flapy.sh run --out-dir results/example_results_{folder_name} --plus-random-runs {output_folder} 20  && " \
                            f"./flapy.sh parse ResultsDirCollection --path results/example_results_{folder_name} get_tests_overview _df to_csv --index=false"
 
             bash_file_dir_exists = os.path.exists(bash_file_dir)
@@ -261,7 +261,7 @@ class CheckAlFlapyProcessByLog400(APIView):
         if not rep_dir_exists:
             os.mkdir(rep_dir)
 
-        max_packages = 70
+        max_packages = 30
 
         #  CheckAlFlapyProcessByLog400.clone_project(flapy_github_url, flapy_dir)
 
@@ -310,12 +310,12 @@ class CheckAlFlapyProcessByLog400(APIView):
             CheckAlFlapyProcessByLog400.run_flapy(output_folder, flapy_dir, bash_file_dir, log_file, package_folder_dir,
                                                   folder_name)
 
-            # package.processed_by_flapy_400 = True
-            # package.save()
+            package.processed_by_flapy_400 = True
+            package.save()
             print(count)
             if count >= max_packages:
                 break
-            sleep(60*30)
+            sleep(60*20)
             print("fim tudo")
         return
 
