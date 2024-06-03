@@ -34,6 +34,17 @@ diretorio_atual = os.path.dirname(__file__)
 
 import csv
 
+# arquivos que nao rodaram
+#httpsgithubcomfacebookresearchpytext
+#/httpsgithubcomjfkirktensorrec n sei o pq
+#httpsgithubcomIronLanguagesironpython3 cmake compile
+
+#httpsgithubcomr0x0rpywebview
+#httpsgithubcomchriskiehlGooey
+#httpsgithubcomMicrosoftPTVS
+#httpsgithubcomajentiajenti
+
+
 
 class CheckAlFlapyProcessHandler():
     stop_processing = False
@@ -139,7 +150,7 @@ class CheckAlFlapyProcessHandler():
                 writer.writerow(
                     ["PROJECT_NAME", "PROJECT_URL", "PROJECT_HASH", "PYPI_TAG", "FUNCS_TO_TRACE",
                      "TESTS_TO_RUN"])
-                NUM_RUNS = 2
+                NUM_RUNS = 70
                 # Escreva os dados da queryset no arquivo CSV
                 writer.writerow([package_name, package_folder_dir, "", "", "",
                                  "", ])
@@ -151,8 +162,8 @@ class CheckAlFlapyProcessHandler():
     @staticmethod
     async def create_bash_file(bash_file_dir, output_folder, folder_name, flapy_dir):
         try:
-            bash_command = f" {flapy_dir}/flapy.sh run --out-dir {flapy_dir}/results/example_results_{folder_name} {output_folder} 1  && " \
-                           f" {flapy_dir}/flapy.sh parse ResultsDirCollection --path {flapy_dir}/example_results_{folder_name} get_tests_overview _df to_csv --index=false"
+            bash_command = f" time ./flapy.sh run --out-dir ./results/example_results_{folder_name} {output_folder} 1  && " \
+                           f" time ./flapy.sh parse ResultsDirCollection --path ./results/example_results_{folder_name} get_tests_overview _df to_csv --index=false"
 
             bash_file_dir_exists = await sync_to_async(os.path.exists)(bash_file_dir)
             if bash_file_dir_exists:
@@ -180,7 +191,7 @@ class CheckAlFlapyProcessHandler():
         # if flapy_folder_exists:
         #     await sync_to_async(shutil.rmtree)(flapy_dir)
 
-        max_packages = 70
+        max_packages = 100
 
         # await CheckAlFlapyProcessHandler.clone_project(flapy_github_url, flapy_dir)
         if not CheckAlFlapyProcessHandler.processing:

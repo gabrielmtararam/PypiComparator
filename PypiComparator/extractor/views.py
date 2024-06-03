@@ -87,7 +87,7 @@ class DownloadALFlapyCSV(APIView):
         # localshop,https://github.com/jmcarp/robobrowser,,,,
         writer.writerow(
             ["PROJECT_NAME", "PROJECT_URL","PROJECT_HASH","PYPI_TAG","FUNCS_TO_TRACE","TESTS_TO_RUN"])  # Substitua campo1, campo2, ... pelos nomes dos campos que deseja exportar
-        NUM_RUNS = 2
+        NUM_RUNS = 40
         # Escreva os dados da queryset no arquivo CSV
         for objeto in queryset:
             #               PROJECT_NAME    ,PROJECT_URL,PROJECT_HASH,PYPI_TAG,FUNCS_TO_TRACE,TESTS_TO_RUN
@@ -95,6 +95,65 @@ class DownloadALFlapyCSV(APIView):
                              "", ])
 
         return response
+
+class GenerateCSVAlFlapyProcessByLog400(APIView):
+    """View for the Structure list management."""
+
+    def get(self, request, *args, **kwargs):
+        """List structures get method."""
+        print("requisitoucsv")
+
+        al_query = {
+            "flapy_link": None,
+            "processed_by_flapy": True,
+            "processed_by_flapy_400": True,
+        }
+        al_filtered = ALIndexLinksAnalysis.objects.filter(** al_query)
+        runnable_packages_count = 0
+        print(f"count packages {al_filtered.count()}")
+        for package in al_filtered:
+            folder_name = package.url.replace('/', '').replace('-', '').replace('.', '').replace(':', '')
+            base_dir = str(settings.BASE_DIR)
+            flapy_dir = base_dir + "/repositories/flapy"
+            log_file = flapy_dir + "/log2/" + folder_name + ".txt"
+            csv_log_file = flapy_dir + "/log_csv/" + folder_name + ".csv"
+            log_file_exists =os.path.exists(log_file)
+            csv_log_lines = []
+            load_csv = False
+            has_passed_test = False
+            find_done = False
+            if log_file_exists:
+                with open(log_file, 'r') as log_file_instance:
+                    for single_line in log_file_instance:
+
+                        if ' passed in ' in single_line:
+                            has_passed_test = True
+                        if find_done:
+                            print(f"single_line-{single_line}- \n")
+                            if single_line.startswith(','):
+                                print(f"startswith \n")
+                                # print(f"{single_line.strip()} {package.url}")
+                                # runnable_packages_count+=1
+                                load_csv = True
+                            find_done = False
+                        if 'Tempo total de execução' in single_line:
+                            find_done = True
+                            # print(f"{single_line.strip()} {package.url}")
+                        if load_csv and has_passed_test:
+                            print(f"append {single_line} \n")
+                            csv_log_lines.append(single_line)
+                print(f"log_file {log_file} \n")
+                print(f"csv_log_file {csv_log_file} \n")
+                print(f"csv_log_lines {csv_log_lines} \n")
+
+                with open(csv_log_file, 'w', newline='') as csv_log_file_instance:
+                    writer = csv.writer(csv_log_file_instance)
+                    for line in csv_log_lines:
+                        row = line.strip().split(',')
+                        writer.writerow(row)
+
+
+        return HttpResponse()
 
 
 class CheckAlFlapyProcessByLog(APIView):
@@ -110,7 +169,7 @@ class CheckAlFlapyProcessByLog(APIView):
         }
         al_filtered = ALIndexLinksAnalysis.objects.filter(** al_query)
         runnable_packages_count = 0
-
+        print(f"count packages {al_filtered.count()}")
         for package in al_filtered:
             folder_name = package.url.replace('/', '').replace('-', '').replace('.', '').replace(':', '')
             base_dir = str(settings.BASE_DIR)
@@ -120,7 +179,9 @@ class CheckAlFlapyProcessByLog(APIView):
             csv_log = ""
             load_csv = False
             has_passed_test = False
+            has_import_error = False
             find_csv_start = False
+            has_no_test = False
             find_done = False
             if log_file_exists:
                 with open(log_file, 'r') as log_file_instance:
@@ -128,10 +189,20 @@ class CheckAlFlapyProcessByLog(APIView):
                         # if '=========' in single_line:
                         if ' passed in ' in single_line:
                             has_passed_test = True
-                            runnable_packages_count += 1
-                            print(f"{single_line.strip()} {package.url}")
-                            package.can_run_flapy = True
-                            package.save()
+                            # runnable_packages_count += 1
+                            # print(f"{single_line.strip()} {package.url}")
+                            # package.can_run_flapy = True
+                            # package.save()
+                        if '= no tests ran' in single_line:
+                            has_no_test = True
+                        if 'ImportError: cannot import name' in single_line:
+                            has_import_error = True
+                        if 'ModuleNotFoundError: No module named' in single_line:
+                            has_import_error = True
+                            # runnable_packages_count += 1
+                            # print(f"{single_line.strip()} {package.url}")
+                            # package.can_run_flapy = True
+                            # package.save()
                         if find_done:
                             if single_line.startswith(','):
                                 # print(f"{single_line.strip()} {package.url}")
@@ -143,8 +214,14 @@ class CheckAlFlapyProcessByLog(APIView):
                             # print(f"{single_line.strip()} {package.url}")
                         if load_csv and has_passed_test:
                             csv_log += single_line
-                    # if load_csv and has_passed_test:
-                    #     print(f"csv_log \n {csv_log} {package.url} \n")
+
+
+                        # if has_import_error:
+                    if has_passed_test and load_csv:
+                        runnable_packages_count += 1
+                        package.can_run_flapy = True
+                        package.save()
+                    #     print(f"log_file {package.url} \n")
         print(f"runnable_packages_count {runnable_packages_count}")
         # response = HttpResponse(content_type='text/csv')
         # response['Content-Disposition'] = 'attachment; filename="dados.csv"'
@@ -192,7 +269,7 @@ class CheckAlFlapyProcessByLog400(APIView):
                 writer.writerow(
                     ["PROJECT_NAME", "PROJECT_URL", "PROJECT_HASH", "PYPI_TAG", "FUNCS_TO_TRACE",
                      "TESTS_TO_RUN"])
-                NUM_RUNS = 2
+                NUM_RUNS = 40
                 # Escreva os dados da queryset no arquivo CSV
                 writer.writerow([package_name, package_folder_dir, "", "", "",
                                  "", ])
@@ -233,8 +310,24 @@ class CheckAlFlapyProcessByLog400(APIView):
     @staticmethod
     def create_bash_file(bash_file_dir, output_folder, folder_name):
         try:
-            bash_command = f"./flapy.sh run --out-dir results/example_results_{folder_name} --plus-random-runs {output_folder} 20  && " \
-                           f"./flapy.sh parse ResultsDirCollection --path results/example_results_{folder_name} get_tests_overview _df to_csv --index=false"
+            bash_command = f"""start_time=$(date +%s) &&
+                             echo "start time : $start " &&
+                           ./flapy.sh run --out-dir results/example_results_{folder_name} --plus-random-runs {output_folder} 20  && 
+                            end_flapy_run=$(date +%s)  && 
+                            duration=$((end_flapy_run - start_time))
+                           hours=$((duration / 3600))
+                            minutes=$(((duration % 3600) / 60))
+                            seconds=$((duration % 60))
+                            echo "Tempo total de execução: ${{hours}} horas, ${{minutes}} minutos, ${{seconds}} segundos."
+
+                           ./flapy.sh parse ResultsDirCollection --path results/example_results_{folder_name} get_tests_overview _df to_csv --index=false
+                           && end_time=$(date +%s)  && 
+                           runtime=$((end_time-start_time)) && 
+                           minutes=$(( (runtime % 3600) / 60 )) && 
+                            echo "end time : end_time " &&
+                            echo "runtime time : $runtime " &&
+                           echo "Execution time : $minutes minutes"
+                           """
 
             bash_file_dir_exists = os.path.exists(bash_file_dir)
             if bash_file_dir_exists:
@@ -261,7 +354,7 @@ class CheckAlFlapyProcessByLog400(APIView):
         if not rep_dir_exists:
             os.mkdir(rep_dir)
 
-        max_packages = 30
+        max_packages = 34
 
         #  CheckAlFlapyProcessByLog400.clone_project(flapy_github_url, flapy_dir)
 
@@ -288,6 +381,7 @@ class CheckAlFlapyProcessByLog400(APIView):
 
         count = 0
         al_filtered = list(al_filtered)
+        print(f"####### qtd pacotes {len(al_filtered)}")
         for package in al_filtered:
             count += 1
             folder_name = package.url.replace('/', '').replace('-', '').replace('.', '').replace(':', '')
@@ -315,7 +409,7 @@ class CheckAlFlapyProcessByLog400(APIView):
             print(count)
             if count >= max_packages:
                 break
-            sleep(60*20)
+            sleep(60*5)
             print("fim tudo")
         return
 
