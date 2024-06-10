@@ -191,7 +191,7 @@ class CheckAlFlapyProcessHandler():
         # if flapy_folder_exists:
         #     await sync_to_async(shutil.rmtree)(flapy_dir)
 
-        max_packages = 100
+        max_packages = 500
 
         # await CheckAlFlapyProcessHandler.clone_project(flapy_github_url, flapy_dir)
         if not CheckAlFlapyProcessHandler.processing:
@@ -243,7 +243,7 @@ class CheckAlFlapyProcessHandler():
                 await sync_to_async(print)(count)
                 if count >= max_packages:
                     break
-                sleep(15)
+                sleep(30)
             await sync_to_async(print)("fim tudo")
             # os.rmdir(flapy_dir)
 

@@ -116,7 +116,7 @@ class GenerateCSVAlFlapyProcessByLog400(APIView):
             base_dir = str(settings.BASE_DIR)
             flapy_dir = base_dir + "/repositories/flapy"
             log_file = flapy_dir + "/log2/" + folder_name + ".txt"
-            csv_log_file = flapy_dir + "/log_csv/" + folder_name + ".csv"
+            csv_log_file = flapy_dir + "/log_csv_400/" + folder_name + ".csv"
             log_file_exists =os.path.exists(log_file)
             csv_log_lines = []
             load_csv = False
@@ -312,7 +312,7 @@ class CheckAlFlapyProcessByLog400(APIView):
         try:
             bash_command = f"""start_time=$(date +%s) &&
                              echo "start time : $start " &&
-                           ./flapy.sh run --out-dir results/example_results_{folder_name} --plus-random-runs {output_folder} 20  && 
+                           ./flapy.sh run --out-dir results/example_results_{folder_name} --plus-random-runs {output_folder} 400  && 
                             end_flapy_run=$(date +%s)  && 
                             duration=$((end_flapy_run - start_time))
                            hours=$((duration / 3600))
@@ -354,13 +354,12 @@ class CheckAlFlapyProcessByLog400(APIView):
         if not rep_dir_exists:
             os.mkdir(rep_dir)
 
-        max_packages = 34
-
+        max_packages = 4
         #  CheckAlFlapyProcessByLog400.clone_project(flapy_github_url, flapy_dir)
 
         bash_file_dir = flapy_dir + "/run_custom_flapy_2.sh"
         output_folder = flapy_dir + "/temporary_example_2.csv"
-        log_folder = flapy_dir + "/log2"
+        log_folder = flapy_dir + "/log_400"
 
         log_folder_exists = os.path.exists(log_folder)
         if not log_folder_exists:
@@ -387,7 +386,7 @@ class CheckAlFlapyProcessByLog400(APIView):
             folder_name = package.url.replace('/', '').replace('-', '').replace('.', '').replace(':', '')
             package_folder_dir = rep_dir + folder_name + ""
 
-            log_file = flapy_dir + "/log2/" + folder_name + ".txt"
+            log_file = flapy_dir + "/log_400/" + folder_name + ".txt"
             CheckAlFlapyProcessByLog400.create_bash_file(bash_file_dir, output_folder, folder_name)
 
             print_value = f"count {package.url} package_folder_dir  {package_folder_dir}"
