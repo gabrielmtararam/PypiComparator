@@ -35,7 +35,7 @@ function startCompareSimilarALWebSocket() {
     console.log("start startCompareALWebSocket links")
     spansALErrorsLen = 0;
     spansALLen = 0;
-    $("#compare-similar-al-list-messages>.content").html("")
+    $("#compare-similar-al-list-messages>.messages-content").html("")
     let url = `ws://${window.location.host}/ws/compare-similar-al-urls/`
     if (ALchatSocket) {
         ALchatSocket.close()
@@ -57,10 +57,10 @@ function startCompareSimilarALWebSocket() {
         if (data['type'] === 'error') {
             spansALErrorsLen += 1;
         }
-        $("#compare-similar-al-list-messages>.content").append(new_span_message)
+        $("#compare-similar-al-list-messages>.messages-content").append(new_span_message)
         spansALLen += 1;
-        $("#comparing-al-list-span-len").html(`Qtd links processados ${spansALLen}`)
-        $("#comparing-al-list-error-len").html(`Qtd links processados com erro ${spansALErrorsLen}`)
+        $("#comparing-al-list-span-len").html(`Awsome Python List URLs equivalents with FlaPy URLs: ${spansALLen}`)
+        $("#comparing-al-list-error-len").html(`Awsome Python List URLs NOT equivalents with FlaPy URLs ${spansALErrorsLen}`)
 
     }
 
@@ -79,7 +79,7 @@ function startCompareALWebSocket() {
     console.log("start startCompareALWebSocket links")
     spansALErrorsLen = 0;
     spansALLen = 0;
-    $("#compare-al-list-messages>.content").html("")
+    $("#compare-al-list-messages>.messages-content").html("")
     let url = `ws://${window.location.host}/ws/compare-al-urls/`
     if (ALchatSocket) {
         ALchatSocket.close()
@@ -101,10 +101,10 @@ function startCompareALWebSocket() {
         if (data['type'] === 'error') {
             spansALErrorsLen += 1;
         }
-        $("#compare-al-list-messages>.content").append(new_span_message)
+        $("#compare-al-list-messages>.messages-content").append(new_span_message)
         spansALLen += 1;
-        $("#comparing-al-list-span-len").html(`Qtd links processados ${spansALLen}`)
-        $("#comparing-al-list-error-len").html(`Qtd links processados com erro ${spansALErrorsLen}`)
+        $("#comparing-al-list-span-len").html(`Awsome Python List URLs equivalents with FlaPy URLs: ${spansALLen}`)
+        $("#comparing-al-list-error-len").html(`Awsome Python List URLs NOT equivalents with FlaPy URLs ${spansALErrorsLen}`)
 
     }
 
@@ -123,7 +123,7 @@ function startProcessALWebSocket() {
     console.log("start processing links")
     spansALErrorsLen = 0;
     spansALLen = 0;
-    $("#processs-al-list-messages>.content").html("")
+    $("#processs-al-list-messages>.messages-content").html("")
     let url = `ws://${window.location.host}/ws/process-al-urls/`
     if (ALchatSocket) {
         ALchatSocket.close()
@@ -134,7 +134,6 @@ function startProcessALWebSocket() {
     ALchatSocket.onmessage = function (e) {
         let data = JSON.parse(e.data)
 
-        console.log("recieved message from web socket ",data)
 
         if (data['message'] === 'started_socket_sucessefuly') {
             ALchatSocket.send(JSON.stringify({
@@ -145,10 +144,9 @@ function startProcessALWebSocket() {
         if (data['type'] === 'error') {
             spansALErrorsLen += 1;
         }
-        $("#process-al-list-messages>.content").append(new_span_message)
+        $("#process-al-list-messages>.messages-content").append(new_span_message)
         spansALLen += 1;
-        $("#processs-al-list-span-len").html(`Qtd links processados ${spansALLen}`)
-        $("#processs-al-list-error-len").html(`Qtd links processados com erro ${spansALErrorsLen}`)
+        $("#processs-al-list-span-len").html(`Processed urls: ${spansALLen}`)
 
     }
 

@@ -64,22 +64,22 @@ class CheckAlFlapyProcessHandler():
 
         if old_al_instance_exists:
             if not old_flapy_instance_exists:
-                return {'message': f"al link já cadastrado, flapy equivalente não encontrado {link}", 'level': 'error'}
+                return {'message': f"Awesome Python List record already registered, equivalent FlaPy url not found for {link}", 'level': 'error'}
             else:
-                return {'message': f" al link já cadastrado, flapy equivalente encontrado {link}", 'level': 'success'}
+                return {'message': f" Awesome Python List record ({link}) already registered , FlaPy url have been found in {old_flapy_instance.url} ", 'level': 'success'}
         else:
             new_al_link = await ALIndexLinks.objects.acreate(
                 url=link,
             )
 
             if not old_flapy_instance_exists:
-                return {'message': f"al link cadastrado, flapy equivalente não encontrado {link}", 'level': "warning"}
+                return {'message': f"Awesome Python List record recorded, equivalent FlaPy url not found {link}", 'level': "warning"}
             else:
                 old_flapy_instance = await sync_to_async(old_flapy_instance.first)()
 
                 new_al_link.flapy_link = old_flapy_instance
                 await sync_to_async(new_al_link.save)()
-                return {'message': f" al link cadastrado, flapy equivalente encontrado {link}", 'level': 'success'}
+                return {'message': f" Awesome Python List record recorded, FlaPy url have been found {link}", 'level': 'success'}
 
     @staticmethod
     async def clone_project(url_repo, output_folder):

@@ -1,5 +1,7 @@
 import os
+import re
 
+import requests
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 from rest_framework.views import APIView
@@ -115,7 +117,7 @@ class GenerateCSVAlFlapyProcessByLog400(APIView):
             folder_name = package.url.replace('/', '').replace('-', '').replace('.', '').replace(':', '')
             base_dir = str(settings.BASE_DIR)
             flapy_dir = base_dir + "/repositories/flapy"
-            log_file = flapy_dir + "/log2/" + folder_name + ".txt"
+            log_file = flapy_dir + "/log_400/" + folder_name + ".txt"
             csv_log_file = flapy_dir + "/log_csv_400/" + folder_name + ".csv"
             log_file_exists =os.path.exists(log_file)
             csv_log_lines = []
@@ -151,6 +153,86 @@ class GenerateCSVAlFlapyProcessByLog400(APIView):
                     for line in csv_log_lines:
                         row = line.strip().split(',')
                         writer.writerow(row)
+
+
+        return HttpResponse()
+
+
+def extract_repo_from_url(url):
+    print(f"repo {url}")
+    match = re.search(r'github\.com/([^/]+/[^/]+)', url)
+    if match:
+        return match.group(1)
+    return None
+
+def get_latest_branch_commit(repo):
+    extacted_url = extract_repo_from_url(repo)
+    url = f'https://api.github.com/repos/{extacted_url}/branches/master'
+    response = requests.get(url)
+    branch_info = response.json()
+    print(f"branch_info {branch_info}")
+    if 'commit' in branch_info:
+        return branch_info['commit']['sha']
+    else:
+        return None
+
+
+class getRepositoriesCommitHashCode(APIView):
+    """View for the Structure list management."""
+
+    def get(self, request, *args, **kwargs):
+        """List structures get method."""
+
+        al_query = {
+            "flapy_link": None,
+            "processed_by_flapy": True,
+            "processed_by_flapy_400": True,
+        }
+        al_filtered = ALIndexLinksAnalysis.objects.filter(** al_query)
+        runnable_packages_count = 0
+        for package in al_filtered:
+            latest_branch_commit = get_latest_branch_commit(package.url)
+            print(f"commits {latest_branch_commit} {package.url}")
+            sleep(60)
+            # folder_name = package.url.replace('/', '').replace('-', '').replace('.', '').replace(':', '')
+            # base_dir = str(settings.BASE_DIR)
+            # flapy_dir = base_dir + "/repositories/flapy"
+            # log_file = flapy_dir + "/log2/" + folder_name + ".txt"
+            # csv_log_file = flapy_dir + "/log_csv_400/" + folder_name + ".csv"
+            # log_file_exists =os.path.exists(log_file)
+            # csv_log_lines = []
+            # load_csv = False
+            # has_passed_test = False
+            # find_done = False
+            # if log_file_exists:
+            #     with open(log_file, 'r') as log_file_instance:
+            #         for single_line in log_file_instance:
+            #
+            #             if ' passed in ' in single_line:
+            #                 has_passed_test = True
+            #             if find_done:
+            #                 print(f"single_line-{single_line}- \n")
+            #                 if single_line.startswith(','):
+            #                     print(f"startswith \n")
+            #                     # print(f"{single_line.strip()} {package.url}")
+            #                     # runnable_packages_count+=1
+            #                     load_csv = True
+            #                 find_done = False
+            #             if 'Tempo total de execução' in single_line:
+            #                 find_done = True
+            #                 # print(f"{single_line.strip()} {package.url}")
+            #             if load_csv and has_passed_test:
+            #                 print(f"append {single_line} \n")
+            #                 csv_log_lines.append(single_line)
+            #     print(f"log_file {log_file} \n")
+            #     print(f"csv_log_file {csv_log_file} \n")
+            #     print(f"csv_log_lines {csv_log_lines} \n")
+            #
+            #     with open(csv_log_file, 'w', newline='') as csv_log_file_instance:
+            #         writer = csv.writer(csv_log_file_instance)
+            #         for line in csv_log_lines:
+            #             row = line.strip().split(',')
+            #             writer.writerow(row)
 
 
         return HttpResponse()
@@ -354,7 +436,7 @@ class CheckAlFlapyProcessByLog400(APIView):
         if not rep_dir_exists:
             os.mkdir(rep_dir)
 
-        max_packages = 4
+        max_packages = 2
         #  CheckAlFlapyProcessByLog400.clone_project(flapy_github_url, flapy_dir)
 
         bash_file_dir = flapy_dir + "/run_custom_flapy_2.sh"
@@ -414,91 +496,6 @@ class CheckAlFlapyProcessByLog400(APIView):
 
     def get(self, request, *args, **kwargs):
         """List structures get method."""
-        print("requisitou")
         CheckAlFlapyProcessByLog400.start_processing()
-        print("requisitou fim")
-
-        # al_query = {
-        #     "flapy_link": None,
-        #     "processed_by_flapy": True,
-        #     "can_run_flapy": True,
-        # }
-        # al_filtered = ALIndexLinksAnalysis.objects.filter(** al_query)
-        # runnable_packages_count = 0
-        #
-        # for package in al_filtered:
-        #     folder_name = package.url.replace('/', '').replace('-', '').replace('.', '').replace(':', '')
-        #     base_dir = str(settings.BASE_DIR)
-        #     flapy_dir = base_dir + "/repositories/flapy"
-        #     log_file = flapy_dir + "/log/" + folder_name + ".txt"
-        #     log_file_exists =os.path.exists(log_file)
-        #     csv_log = ""
-        #     load_csv = False
-        #     has_passed_test = False
-        #     find_csv_start = False
-        #     find_done = False
-        #     if log_file_exists:
-        #         with open(log_file, 'r') as log_file_instance:
-        #             for single_line in log_file_instance:
-        #                 # if '=========' in single_line:
-        #                 if ' passed in ' in single_line:
-        #                     has_passed_test = True
-        #                     runnable_packages_count += 1
-        #                     print(f"{single_line.strip()} {package.url}")
-        #                     package.can_run_flapy = True
-        #                     package.save()
-        #                 if find_done:
-        #                     if single_line.startswith(','):
-        #                         # print(f"{single_line.strip()} {package.url}")
-        #                         # runnable_packages_count+=1
-        #                         load_csv = True
-        #                     find_done = False
-        #                 if 'Done' in single_line:
-        #                     find_done = True
-        #                     # print(f"{single_line.strip()} {package.url}")
-        #                 if load_csv and has_passed_test:
-        #                     csv_log += single_line
-        #             # if load_csv and has_passed_test:
-        #             #     print(f"csv_log \n {csv_log} {package.url} \n")
-        # print(f"runnable_packages_count {runnable_packages_count}")
-        # response = HttpResponse(content_type='text/csv')
-        # response['Content-Disposition'] = 'attachment; filename="dados.csv"'
-
-        # writer = csv.writer(response)
-        #
-        #
-        #
-        # queryset = ALIndexLinks.objects.filter(
-        #     flapy_link=None,
-        #     similar_flapy_link=None
-        # )
-        # queryset = queryset.filter(Q(is_a_project=True) | Q(is_a_project__isnull=True))
-        #
-        # # Escreva os cabeçalhos CSV
-        # #PROJECT_NAME,PROJECT_URL,PROJECT_HASH,PYPI_TAG,FUNCS_TO_TRACE,TESTS_TO_RUN
-        # # localshop,https://github.com/jmcarp/robobrowser,,,,
-        # writer.writerow(
-        #     ["PROJECT_NAME", "PROJECT_URL","PROJECT_HASH","PYPI_TAG","FUNCS_TO_TRACE","TESTS_TO_RUN"])  # Substitua campo1, campo2, ... pelos nomes dos campos que deseja exportar
-        # NUM_RUNS = 2
-        # # Escreva os dados da queryset no arquivo CSV
-        # for objeto in queryset:
-        #     #               PROJECT_NAME    ,PROJECT_URL,PROJECT_HASH,PYPI_TAG,FUNCS_TO_TRACE,TESTS_TO_RUN
-        #     writer.writerow([objeto.url[-18:-1], objeto.url, "", "", "",
-        #                      "", ])
 
         return HttpResponse()
-
-
-class SimpleIndexExtractor(APIView):
-    """View for the Structure list management."""
-
-    def get(self, request, *args, **kwargs):
-        """List structures get method."""
-        first_global_paramenter = GlobalProcessorParameters.objects.all().first()
-        context = {
-            'global_parameters': None
-        }
-        if first_global_paramenter:
-            context['global_parameters'] = first_global_paramenter
-        print(f"context ",context)
-        return render(request, "extractor_home_page.html", context)

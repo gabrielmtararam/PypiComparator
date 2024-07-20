@@ -15,15 +15,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-from .views import HomeExtractor, SimpleIndexExtractor, DownloadALFlapyList, DownloadALFlapyCSV, \
-    CheckAlFlapyProcessByLog, CheckAlFlapyProcessByLog400, GenerateCSVAlFlapyProcessByLog400
+from .views import HomeExtractor, DownloadALFlapyList, DownloadALFlapyCSV, \
+    CheckAlFlapyProcessByLog, CheckAlFlapyProcessByLog400, GenerateCSVAlFlapyProcessByLog400, \
+    getRepositoriesCommitHashCode
 
 from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
     path('', HomeExtractor.as_view(), name='stractor'),
-    path('extract-urls-from-simple-index', SimpleIndexExtractor.as_view(), name='extract_urls_from_simple_index'),
     path('download-al-flapy-list', DownloadALFlapyList.as_view(), name='download_al_flapy_list'),
     path('download-al-flapy-csv', DownloadALFlapyCSV.as_view(), name='download_al_flapy_csv'),
     path('check-al-flapy-process-by-log', CheckAlFlapyProcessByLog.as_view(), name='check_al_flapy_process_by_log'),
@@ -31,4 +31,6 @@ urlpatterns = [
          name='check_al_flapy_process_by_log_400'),
     path('generate-csv-al-flapy-process-by-log-400', GenerateCSVAlFlapyProcessByLog400.as_view(),
          name='generate_csv_al_flapy_process_by_log_400'),
+    path('get-repositories-commit-hash-code', getRepositoriesCommitHashCode.as_view(),
+         name='get_repositories_commit_hash_code'),
 ]

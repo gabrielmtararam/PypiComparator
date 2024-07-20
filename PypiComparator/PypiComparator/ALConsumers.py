@@ -47,22 +47,23 @@ class ALComparerHandler():
 
         if old_al_instance_exists:
             if not old_flapy_instance_exists:
-                return {'message': f"al link já cadastrado, flapy equivalente não encontrado {link}", 'level': 'error'}
+                return {'message': f"Awesome Python List record already registered. Equivalent FlaPy url not found for {link}", 'level': 'error'}
             else:
-                return {'message': f" al link já cadastrado, flapy equivalente encontrado {link}", 'level': 'success'}
+                old_flapy_instance = await sync_to_async(old_flapy_instance.first)()
+                return {'message': f" Awesome Python List record already registered ({link}). FlaPy url have been found in {old_flapy_instance.url}", 'level': 'success'}
         else:
             new_al_link = await ALIndexLinks.objects.acreate(
                 url=link,
             )
 
             if not old_flapy_instance_exists:
-                return {'message': f"al link cadastrado, flapy equivalente não encontrado {link}", 'level': "warning"}
+                return {'message': f"Awesome Python List record cadastrado, equivalent FlaPy url not found {link}", 'level': "warning"}
             else:
                 old_flapy_instance = await sync_to_async(old_flapy_instance.first)()
 
                 new_al_link.flapy_link = old_flapy_instance
                 await sync_to_async(new_al_link.save)()
-                return {'message': f" al link cadastrado, flapy equivalente encontrado {link}", 'level': 'success'}
+                return {'message': f" Awesome Python List record cadastrado, FlaPy url have been found {link}", 'level': 'success'}
 
     @staticmethod
     async def start_processing(queue):
@@ -151,7 +152,7 @@ class ALComparerSimilarHandler():
 
         if old_al_instance_exists:
             if not old_flapy_instance_exists:
-                return {'message': f"al link já cadastrado, flapy equivalente não encontrado {link} palavra {search_link_last_world}", 'level': 'error'}
+                return {'message': f"Awesome Python List record already registered, equivalent FlaPy url not found {link} word {search_link_last_world}", 'level': 'error'}
             else:
                 old_flapy_instance = await sync_to_async(old_flapy_instance.first)()
                 old_al_instance = await sync_to_async(old_al_instance.first)()
@@ -166,11 +167,11 @@ class ALComparerSimilarHandler():
                     await sync_to_async(old_al_instance.save)()
                 else:
                     return {
-                        'message': f" al link flay link igual ao similar{link}  palavra {search_link_last_world}",
+                        'message': f" Awesome Python List record ({link}) FlaPY url similar to {old_al_instance.url} by word {search_link_last_world}",
                         'level': 'warning'}
-                return {'message': f" al link já cadastrado, flapy equivalente encontrado {link}  palavra {search_link_last_world}", 'level': 'success'}
+                return {'message': f" Awesome Python List record ({link}) already registered, FlaPy url similar  {old_al_instance.url} have been found in  word {search_link_last_world} in ", 'level': 'success'}
         else:
-            return {'message': f" al link ainda não cadastrado {link}  palavra {search_link_last_world}", 'level': 'error'}
+            return {'message': f" Awesome Python List record not registered yet {link} searched word {search_link_last_world}", 'level': 'error'}
 
     @staticmethod
     async def start_processing(queue):

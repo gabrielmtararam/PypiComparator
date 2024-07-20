@@ -98,10 +98,14 @@ class GlobalProcessorParametersAdmin(SimpleHistoryAdmin, DjangoQLSearchMixin):
 
 
 @admin.register(mod.PyPiFlapyIndexLinks)
-class PyPiFlapyIndexLinksAdmin(SimpleHistoryAdmin, DjangoQLSearchMixin):
+class PyPiFlapyIndexLinksAdmin(DjangoQLSearchMixin, SimpleHistoryAdmin):
     """StationCodeType model admin."""
 
     form = forms.PyPiFlapyIndexLinksForm
+    list_display = (
+        "pk",
+        "url",
+    )
     # list_display = (
     #     "station",
     #     "code_type",

@@ -13,7 +13,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 -->
 
-{% load static%}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -72,8 +72,7 @@
            aria-hidden="true" id="iconSidenav"></i>
         <a class="navbar-brand m-0" href=" https://demos.creative-tim.com/material-dashboard/pages/dashboard "
            target="_blank">
-            <img src="{% static 'assets/img/logo-ct.png' %}" class="navbar-brand-img h-100" alt="main_logo">
-            <span class="ms-1 font-weight-bold text-white">Material Dashboard 2</span>
+            <span class="ms-1 font-weight-bold text-white">PyPi Comparer</span>
         </a>
     </div>
 
@@ -85,13 +84,29 @@
 
 
             <li class="nav-item">
-                <a class="nav-link text-white " href="./dashboard.html">
+                <a data-toggle="collapse"
+                        data-target="#collapseAwsomeList"
+                        aria-expanded="false" aria-controls="collapseAwsomeList"
+                        class="nav-link text-white " href="./dashboard.html">
 
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="material-icons opacity-10">dashboard</i>
+                        <i class="material-icons opacity-10">compare</i>
                     </div>
 
-                    <span class="nav-link-text ms-1">Dashboard</span>
+                    <span class="nav-link-text ms-1">Compare PyPi modules with Awesome List</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a data-toggle="collapse"
+                        data-toggle="collapse" data-target="#al-flapy-list-collapse"
+            aria-expanded="false" aria-controls="al-flapy-list-collapse"
+                        class="nav-link text-white ">
+
+                    <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">dvr</i>
+                    </div>
+
+                    <span class="nav-link-text ms-1">   Awsome list process with Flapy</span>
                 </a>
             </li>
 
@@ -106,11 +121,10 @@
 </aside>
 
 <main class="main-content border-radius-lg ">
-{% include 'extractor_base_content.html' with global_parameters=global_parameters%}
-{% include 'flapy_base_content.html' with global_parameters=global_parameters %}
+    {% include 'extractor_base_content.html' with global_parameters=global_parameters %}
+    {% include 'flapy_base_content.html' with global_parameters=global_parameters %}
 
 </main>
-
 
 
 <!--   Core JS Files   -->

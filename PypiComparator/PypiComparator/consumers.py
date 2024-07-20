@@ -53,7 +53,7 @@ class SimpleIndexProcessorHandler():
             )
             return {'message': f"link cadastrado com sucesso {link_completo}", 'level': 'success'}
         else:
-            return {'message': f"link já cadastrado {link_completo}", 'level': 'warning'}
+            return {'message': f"link already registered {link_completo}", 'level': 'warning'}
 
     @staticmethod
     async def start_processing(queue):
@@ -263,9 +263,9 @@ class ALProcessorHandler():
                 url=link,
                 name=name,
             )
-            return {'message': f"link cadastrado com sucesso {link}", 'level': 'success'}
+            return {'message': f"Url registered successfullyo {link}", 'level': 'success'}
         else:
-            return {'message': f"link já cadastrado {link}", 'level': 'warning'}
+            return {'message': f"Url already registered {link}", 'level': 'warning'}
 
     @staticmethod
     async def start_processing(queue):
@@ -289,8 +289,7 @@ class ALProcessorHandler():
                     if ALProcessorHandler.stop_processing:
                         break
 
-                print(f'Total de links no formato especificado: {link_count}')
-            await queue.put({'message': f"todos os links cadastrados com sucesso {link_count}", 'level': 'error'})
+            await queue.put({'message': f"Links registered successfully {link_count}", 'level': 'error'})
             return
 
 

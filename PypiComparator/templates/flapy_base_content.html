@@ -1,28 +1,23 @@
 {% load static %}
 {% csrf_token %}
 <script src="{% static 'js/base-al-flapy-process.js' %}"></script>
-<br>
-<p>
-    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#al-flapy-list-collapse"
-            aria-expanded="false" aria-controls="al-flapy-list-collapse">
-        Awsome list process with Flapy
-    </button>
-</p><br>
+
 <div class="collapse" id="al-flapy-list-collapse">
-    <div class="card card-body">
-        <button data-url="{% url 'download_al_flapy_list' %}" id="download-al-flapy-list"> Baixar lista de projetos AL que serão processados</button>
-        <button data-url="{% url 'download_al_flapy_csv' %}" id="download-al-flapy-csv"> Baixar csv executavel dos projetos AL que serão processados</button>
-        <button  id="update-al-flapy-process"> Atualizar lista de projetos AL que serão processados</button>
+    <div class="card card-body dark">
+        <button  class="btn btn-dark" data-url="{% url 'download_al_flapy_list' %}" id="download-al-flapy-list"> Download the list of Awesome Python projects that will be processed.</button>
+        <button  class="btn btn-dark" data-url="{% url 'download_al_flapy_csv' %}" id="download-al-flapy-csv"> Download executable CSV of the Awesome Python projects that will be processed</button>
+        <button  class="btn btn-dark"  id="update-al-flapy-process"> Update the list of Awesome Python projects that will be processed.</button>
         <br>
         <br>
-        <button  id="check-al-flapy-process"> Gerar log dos pacotes com FLAPY</button>
-        <button data-url="{% url 'check_al_flapy_process_by_log' %}" id="check-al-flapy-process-by-log"> Verificar pacotes que rodam no FLAPY</button>
-        <button data-url="{% url 'check_al_flapy_process_by_log_400' %}" id="check-al-flapy-process-by-log-400"> Verificar pacotes que rodam no FLAPY 400 runs</button>
-        <button data-url="{% url 'generate_csv_al_flapy_process_by_log_400' %}" id="generate-csv-al-flapy-process-by-log-400"> Gerar csv dos pacotes que rodam no FLAPY 400 runs</button>
+        <button  class="btn btn-dark"  id="check-al-flapy-process"> Gerar log dos pacotes com FLAPY</button>
+        <button  class="btn btn-dark" data-url="{% url 'check_al_flapy_process_by_log' %}" id="check-al-flapy-process-by-log"> Check filtered packages that run on FLAPY.</button>
+        <button  class="btn btn-dark" data-url="{% url 'check_al_flapy_process_by_log_400' %}" id="check-al-flapy-process-by-log-400"> Check packages that run on FLAPY, 400 runs</button>
+        <button  class="btn btn-dark" data-url="{% url 'generate_csv_al_flapy_process_by_log_400' %}" id="generate-csv-al-flapy-process-by-log-400"> Generate CSV of the packages that run on FLAPY, 400 runs</button>
+        <button  class="btn btn-dark" data-url="{% url 'get_repositories_commit_hash_code' %}" id="get-repositories-commit-hash-code"> Obtain hash codes of the commits from the analyzed repositories</button>
         <div id="check-flapy-process-collapse-messages">
             <span id="span-len"></span>
             <span id="span-error-len"></span>
-            <div class="content">
+            <div class="messages-content">
                 ...
             </div>
         </div>

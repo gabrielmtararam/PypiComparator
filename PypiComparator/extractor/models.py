@@ -72,6 +72,9 @@ class PyPiFlapyIndexLinks(BaseModel):
     name = models.CharField(_("name"), help_text=_("name"), max_length=512, blank=True)
     def __str__(self):
         return '{}'.format(self.url)
+    class Meta:
+        verbose_name = 'FlaPy URL'
+        verbose_name_plural = 'FlaPy URLs'
 
 class ALIndexLinks(BaseModel):
     """Project Base Parameter model.
@@ -105,6 +108,9 @@ class ALIndexLinks(BaseModel):
     short_description = models.CharField(_("short_description"), help_text=_("short_description"), max_length=512, blank=True, null=True)
     processed_by_flapy = models.BooleanField(_("processed"), default=False, help_text=_("processed"), blank=True, null=True)
     processed_by_flapy_400 = models.BooleanField(_("processed_by_flapy_400"), default=False, help_text=_("processed_by_flapy_400"), blank=True, null=True)
+    class Meta:
+        verbose_name = 'Awsome Python List Record'
+        verbose_name_plural = 'Awsome Python List Records'
 
 class ALIndexLinksAnalysis(BaseModel):
     """Project Base Parameter model.
