@@ -1,0 +1,71 @@
+{% load static %}
+<script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+<script src="{% static 'js/base-al-comparer.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}"/>
+<link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/bootstrap.min.css' %}"/>
+total links per chunk  {{ global_parameters.total_links_to_process_per_chunck }}
+{% csrf_token %}
+<br>
+
+<div class="collapse" id="collapseAwsomeList">
+    <div class="card card-body dark">
+        <div class="buttons-container">
+            <div class="buttons-div">
+                <button class="btn btn-dark" id="start-processs-al-list"> Start processing and recording FlaPy Python list URLs
+                </button>
+            </div>
+            <div class="buttons-div">
+                <button class="btn btn-danger" id="stop-processs-al-list">Stop
+                </button>
+            </div>
+        </div>
+        <div id="process-al-list-messages">
+            <span id="processs-al-list-span-len"></span>
+            <span id="processs-al-list-error-len"></span>
+            <div class="messages-content">
+                ....
+            </div>
+        </div>
+        <div class="buttons-container">
+            <div class="buttons-div">
+                <button class="btn btn-dark" id="start-comparing-al-list"> Start comparing Awesome Python list
+                </button>
+            </div>
+            <div class="buttons-div">
+                <button class="btn btn-danger" id="stop-comparing-al-list">Stop
+                </button>
+            </div>
+        </div>
+        <div id="compare-al-list-messages">
+            <span id="comparing-al-list-span-len"></span>
+            <br>
+            <span id="comparing-al-list-error-len"></span>
+            <div class="messages-content">
+                ....
+            </div>
+        </div>
+        <br><br>
+        <div class="buttons-container">
+            <div class="buttons-div">
+                <button class="btn btn-dark" id="start-comparing-similar-al-list"> Start comparing similar to Flapy
+                    Awesome
+                    Python list
+                </button>
+            </div>
+            <div class="buttons-div">
+                <button class="btn btn-danger" id="stop-comparing-similar-al-list">Stop
+
+                </button>
+            </div>
+        </div>
+        <div id="compare-similar-al-list-messages">
+            <span id="comparing-similar-al-list-span-len"></span>
+            <span id="comparing-similar-al-list-error-len"></span>
+            <div class="messages-content">
+                ....
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
