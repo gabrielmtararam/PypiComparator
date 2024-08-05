@@ -1,14 +1,8 @@
-let ALFlapychatSocket = null;
+let ALFlapySocket = null;
 let spansALFlapyLen = 0;
 let spansALFlapyErrorsLen = 0;
 
 $(document).ready(function () {
-    $("#update-al-flapy-process").click(function () {
-        // updateAlFlapyProcessList()
-    });
-    $("#download-al-flapy-list").click(function () {
-        downloadALFlapyList()
-    });
 
     $("#download-al-flapy-csv").click(function () {
         downloadALFlapyCSV()
@@ -36,36 +30,17 @@ $(document).ready(function () {
         getRepositoriesCommitHashCode()
     });
 
+    $("#stop-comparing-similar-al-list").click(function () {
+        stopCompareSimilarAL()
+    });
+
 });
 
-function downloadALFlapyList() {
-    let url = $("#download-al-flapy-list").data("url");
-    $.ajax({
-        url: url,  // Substitua pela URL da sua view Django
-        type: 'GET',
-        success: function (response) {
-            console.log("responder ",response)
-            var blob = new Blob([response]);
-            var link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            link.download = 'dados.csv';
-            link.click();
-        }
-    });
-}
 function downloadALFlapyCSV() {
     let url = $("#download-al-flapy-csv").data("url");
     $.ajax({
         url: url,  // Substitua pela URL da sua view Django
         type: 'GET',
-        success: function (response) {
-            console.log("responder ",response)
-            var blob = new Blob([response]);
-            var link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            link.download = 'custom_flapy_teste.csv';
-            link.click();
-        }
     });
 }
 function checkAlFlapyProcessByLog() {
@@ -73,14 +48,6 @@ function checkAlFlapyProcessByLog() {
     $.ajax({
         url: url,  // Substitua pela URL da sua view Django
         type: 'GET',
-        success: function (response) {
-            console.log("responder ",response)
-            // var blob = new Blob([response]);
-            // var link = document.createElement('a');
-            // link.href = window.URL.createObjectURL(blob);
-            // link.download = 'custom_flapy_teste.csv';
-            // link.click();
-        }
     });
 }
 
@@ -90,14 +57,6 @@ function checkAlFlapyProcessByLog400() {
     $.ajax({
         url: url,  // Substitua pela URL da sua view Django
         type: 'GET',
-        success: function (response) {
-            console.log("response ",response)
-            // var blob = new Blob([response]);
-            // var link = document.createElement('a');
-            // link.href = window.URL.createObjectURL(blob);
-            // link.download = 'custom_flapy_teste.csv';
-            // link.click();
-        }
     });
 }
 
@@ -106,54 +65,34 @@ function generateCSVAlFlapyProcessByLog400() {
     $.ajax({
         url: url,  // Substitua pela URL da sua view Django
         type: 'GET',
-        success: function (response) {
-            console.log("response ",response)
-            // var blob = new Blob([response]);
-            // var link = document.createElement('a');
-            // link.href = window.URL.createObjectURL(blob);
-            // link.download = 'custom_flapy_teste.csv';
-            // link.click();
-        }
     });
 }
 
 
 function getRepositoriesCommitHashCode() {
     let url = $("#get-repositories-commit-hash-code").data("url");
-    console.log("url ",url)
     $.ajax({
         url: url,  // Substitua pela URL da sua view Django
         type: 'GET',
-        success: function (response) {
-            console.log(" getRepositoriesCommitHashCode response ",response)
-            // var blob = new Blob([response]);
-            // var link = document.createElement('a');
-            // link.href = window.URL.createObjectURL(blob);
-            // link.download = 'custom_flapy_teste.csv';
-            // link.click();
-        }
     });
 }
 
 function checkAlFlapyProcess() {
-    console.log("start updateAlFlapyProcessList")
     spansALFlapyErrorsLen = 0;
     spansALFlapyLen = 0;
     $("#compare-similar-al-list-messages>.messages-content").html("")
     let url = `ws://${window.location.host}/ws/check-al-flapy-process/`
-    if (ALFlapychatSocket) {
-        ALFlapychatSocket.close()
+    if (ALFlapySocket) {
+        ALFlapySocket.close()
         stopProcessAL()
     }
-    ALFlapychatSocket = new WebSocket(url)
+    ALFlapySocket = new WebSocket(url)
 
-    ALFlapychatSocket.onmessage = function (e) {
+    ALFlapySocket.onmessage = function (e) {
         let data = JSON.parse(e.data)
 
-        console.log("recieved message from web socket ", data)
-
         if (data['message'] === 'started_socket_sucessefuly') {
-            ALFlapychatSocket.send(JSON.stringify({
+            ALFlapySocket.send(JSON.stringify({
                 'message': "start_processing_al"
             }))
         }
@@ -166,15 +105,13 @@ function checkAlFlapyProcess() {
         $("#comparing-al-list-span-len").html(`Awsome Python List URLs equivalents with FlaPy URLs: ${spansALFlapyLen}`)
         $("#comparing-al-list-error-len").html(`Awsome Python List URLs NOT equivalents with FlaPy URLs ${spansALFlapyErrorsLen}`)
 
-        // }
     }
 }
-//
-// function stopCompareSimilarAL() {
-//     console.log("stop stopCompareAL")
-//     ALFlapychatSocket.send(JSON.stringify({
-//         'message': "stop_processing_al"
-//     }))
-// }
+
+function stopCompareSimilarAL() {
+    ALFlapySocket.send(JSON.stringify({
+        'message': "stop_processing_al"
+    }))
+}
 
 

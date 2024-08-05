@@ -4,16 +4,14 @@
 
 <div class="collapse" id="al-flapy-list-collapse">
     <div class="card card-body dark">
-        <button  class="btn btn-dark" data-url="{% url 'download_al_flapy_list' %}" id="download-al-flapy-list"> Download the list of Awesome Python projects that will be processed.</button>
         <button  class="btn btn-dark" data-url="{% url 'download_al_flapy_csv' %}" id="download-al-flapy-csv"> Download executable CSV of the Awesome Python projects that will be processed</button>
-        <button  class="btn btn-dark"  id="update-al-flapy-process"> Update the list of Awesome Python projects that will be processed.</button>
         <br>
         <br>
-        <button  class="btn btn-dark"  id="check-al-flapy-process"> Gerar log dos pacotes com FLAPY</button>
-        <button  class="btn btn-dark" data-url="{% url 'check_al_flapy_process_by_log' %}" id="check-al-flapy-process-by-log"> Check filtered packages that run on FLAPY.</button>
-        <button  class="btn btn-dark" data-url="{% url 'check_al_flapy_process_by_log_400' %}" id="check-al-flapy-process-by-log-400"> Check packages that run on FLAPY, 400 runs</button>
-        <button  class="btn btn-dark" data-url="{% url 'generate_csv_al_flapy_process_by_log_400' %}" id="generate-csv-al-flapy-process-by-log-400"> Generate CSV of the packages that run on FLAPY, 400 runs</button>
-        <button  class="btn btn-dark" data-url="{% url 'get_repositories_commit_hash_code' %}" id="get-repositories-commit-hash-code"> Obtain hash codes of the commits from the analyzed repositories</button>
+        <button  class="btn btn-dark"  id="check-al-flapy-process">Run filtered projects on FlaPy with one run and save log data</button>
+        <button  class="btn btn-dark" data-url="{% url 'check_al_flapy_process_by_log' %}" id="check-al-flapy-process-by-log"> Check filtered projects that run on FLAPY.</button>
+        <button  class="btn btn-dark" data-url="{% url 'check_al_flapy_process_by_log_400' %}" id="check-al-flapy-process-by-log-400"> Run filtered projects using 400 runs with random order and save log</button>
+        <button  class="btn btn-dark" data-url="{% url 'generate_csv_al_flapy_process_by_log_400' %}" id="generate-csv-al-flapy-process-by-log-400"> Extract CSV of the 400 runs log result</button>
+{#        <button  class="btn btn-dark" data-url="{% url 'get_repositories_commit_hash_code' %}" id="get-repositories-commit-hash-code"> Obtain hash codes of the commits from the analyzed repositories</button>#}
         <div id="check-flapy-process-collapse-messages">
             <span id="span-len"></span>
             <span id="span-error-len"></span>

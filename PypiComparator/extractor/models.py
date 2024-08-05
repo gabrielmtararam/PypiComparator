@@ -100,8 +100,6 @@ class ALIndexLinks(BaseModel):
         null=True
     )
     url = models.CharField(_("url"), help_text=_("url"), max_length=512, blank=False)
-    is_a_project = models.BooleanField(_("is_a_project"), default=False, help_text=_("is_a_project"), blank=True,
-                                             null=True)
     can_run_flapy = models.BooleanField(_("can_run_flapy"), default=False, help_text=_("can_run_flapy"), blank=True,
                                              null=True)
     processed_by_flapy_message = models.CharField(_("processed_message"), help_text=_("processed_message"), max_length=512, blank=True, null=True)
@@ -136,8 +134,6 @@ class ALIndexLinksAnalysis(BaseModel):
         null=True
     )
     url = models.CharField(_("url"), help_text=_("url"), max_length=512, blank=False)
-    is_a_project = models.BooleanField(_("is_a_project"), default=False, help_text=_("is_a_project"), blank=True,
-                                             null=True)
     can_run_flapy = models.BooleanField(_("can_run_flapy"), default=False, help_text=_("can_run_flapy"), blank=True,
                                              null=True)
     processed_by_flapy_message = models.CharField(_("processed_message"), help_text=_("processed_message"), max_length=512, blank=True, null=True)

@@ -1,4 +1,4 @@
-let ALchatSocket = null;
+let ALSocket = null;
 let spansALLen = 0;
 let spansALErrorsLen = 0;
 
@@ -32,24 +32,21 @@ $(document).ready(function () {
 
 
 function startCompareSimilarALWebSocket() {
-    console.log("start startCompareALWebSocket links")
     spansALErrorsLen = 0;
     spansALLen = 0;
     $("#compare-similar-al-list-messages>.messages-content").html("")
     let url = `ws://${window.location.host}/ws/compare-similar-al-urls/`
-    if (ALchatSocket) {
-        ALchatSocket.close()
+    if (ALSocket) {
+        ALSocket.close()
         stopProcessAL()
     }
-    ALchatSocket = new WebSocket(url)
+    ALSocket = new WebSocket(url)
 
-    ALchatSocket.onmessage = function (e) {
+    ALSocket.onmessage = function (e) {
         let data = JSON.parse(e.data)
 
-        console.log("recieved message from web socket ",data)
-
         if (data['message'] === 'started_socket_sucessefuly') {
-            ALchatSocket.send(JSON.stringify({
+            ALSocket.send(JSON.stringify({
                 'message': "start_processing_al"
             }))
         }
@@ -67,8 +64,7 @@ function startCompareSimilarALWebSocket() {
 }
 
 function stopCompareSimilarAL() {
-    console.log("stop stopCompareAL")
-    ALchatSocket.send(JSON.stringify({
+    ALSocket.send(JSON.stringify({
         'message': "stop_processing_al"
     }))
 }
@@ -76,24 +72,21 @@ function stopCompareSimilarAL() {
 
 
 function startCompareALWebSocket() {
-    console.log("start startCompareALWebSocket links")
     spansALErrorsLen = 0;
     spansALLen = 0;
     $("#compare-al-list-messages>.messages-content").html("")
     let url = `ws://${window.location.host}/ws/compare-al-urls/`
-    if (ALchatSocket) {
-        ALchatSocket.close()
+    if (ALSocket) {
+        ALSocket.close()
         stopProcessAL()
     }
-    ALchatSocket = new WebSocket(url)
+    ALSocket = new WebSocket(url)
 
-    ALchatSocket.onmessage = function (e) {
+    ALSocket.onmessage = function (e) {
         let data = JSON.parse(e.data)
 
-        console.log("recieved message from web socket ",data)
-
         if (data['message'] === 'started_socket_sucessefuly') {
-            ALchatSocket.send(JSON.stringify({
+            ALSocket.send(JSON.stringify({
                 'message': "start_processing_al"
             }))
         }
@@ -111,8 +104,7 @@ function startCompareALWebSocket() {
 }
 
 function stopCompareAL() {
-    console.log("stop stopCompareAL")
-    ALchatSocket.send(JSON.stringify({
+    ALSocket.send(JSON.stringify({
         'message': "stop_processing_al"
     }))
 }
@@ -120,23 +112,22 @@ function stopCompareAL() {
 
 
 function startProcessALWebSocket() {
-    console.log("start processing links")
     spansALErrorsLen = 0;
     spansALLen = 0;
     $("#processs-al-list-messages>.messages-content").html("")
     let url = `ws://${window.location.host}/ws/process-al-urls/`
-    if (ALchatSocket) {
-        ALchatSocket.close()
+    if (ALSocket) {
+        ALSocket.close()
         stopProcessAL()
     }
-    ALchatSocket = new WebSocket(url)
+    ALSocket = new WebSocket(url)
 
-    ALchatSocket.onmessage = function (e) {
+    ALSocket.onmessage = function (e) {
         let data = JSON.parse(e.data)
 
 
         if (data['message'] === 'started_socket_sucessefuly') {
-            ALchatSocket.send(JSON.stringify({
+            ALSocket.send(JSON.stringify({
                 'message': "start_processing_al"
             }))
         }
@@ -153,8 +144,7 @@ function startProcessALWebSocket() {
 }
 
 function stopProcessAL() {
-    console.log("stop processingal")
-    ALchatSocket.send(JSON.stringify({
+    ALSocket.send(JSON.stringify({
         'message': "stop_processing_al"
     }))
 }

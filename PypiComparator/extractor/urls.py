@@ -15,7 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-from .views import HomeExtractor, DownloadALFlapyList, DownloadALFlapyCSV, \
+from .views import HomeExtractor, DownloadALFlapyCSV, \
     CheckAlFlapyProcessByLog, CheckAlFlapyProcessByLog400, GenerateCSVAlFlapyProcessByLog400, \
     getRepositoriesCommitHashCode
 
@@ -24,7 +24,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('', HomeExtractor.as_view(), name='stractor'),
-    path('download-al-flapy-list', DownloadALFlapyList.as_view(), name='download_al_flapy_list'),
     path('download-al-flapy-csv', DownloadALFlapyCSV.as_view(), name='download_al_flapy_csv'),
     path('check-al-flapy-process-by-log', CheckAlFlapyProcessByLog.as_view(), name='check_al_flapy_process_by_log'),
     path('check-al-flapy-process-by-log-400', CheckAlFlapyProcessByLog400.as_view(),

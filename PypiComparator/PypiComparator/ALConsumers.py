@@ -1,32 +1,17 @@
 import json
-import random
-from time import sleep
 import asyncio
 
-from channels.generic.websocket import AsyncWebsocketConsumer, WebsocketConsumer
 from asgiref.sync import async_to_sync, sync_to_async
 from asyncio import Queue
 
 from channels.generic.websocket import AsyncWebsocketConsumer
-import random
-from time import sleep
 from PypiComparator import settings
-import requests
 import os
-from bs4 import BeautifulSoup
-
-from extractor.models import PypiSimpleIndexLinks
-
-from extractor.models import GlobalProcessorParameters
-
-from extractor.models import PypiProcessedLink
 
 from extractor.models import PyPiFlapyIndexLinks
 from extractor.models import ALIndexLinks
 
 diretorio_atual = os.path.dirname(__file__)
-
-import csv
 
 
 class ALComparerHandler():
@@ -79,13 +64,13 @@ class ALComparerHandler():
                     if link.startswith('http'):
                         message_data = await ALComparerHandler.compare_with_pypi_record(link)
                     else:
-                        message_data = {'message': f"link invalido {link}", 'level': 'error'}
+                        message_data = {'message': f"invalid url {link}", 'level': 'error'}
                     link_count += 1
                     await queue.put(message_data)
 
 
-                print(f'Total de links no formato especificado: {link_count}')
-            await queue.put({'message': f"todos os links cadastrados com sucesso {link_count}", 'level': 'error'})
+                print(f'Number of urls in specified format: {link_count}')
+            await queue.put({'message': f"All links recorded sucessefuly {link_count}", 'level': 'error'})
             return
 
 
@@ -121,7 +106,6 @@ class ALUrlComparerConsumer(AsyncWebsocketConsumer):
         }))
 
     async def send_feedback_message_level(self, message):
-        # print("message ",message)
         await self.send(text_data=json.dumps({
             'type': message['level'],
             'message': message['message']
@@ -187,12 +171,11 @@ class ALComparerSimilarHandler():
                     if link.startswith('http'):
                         message_data = await ALComparerSimilarHandler.compare_with_similar_pypi_record(link)
                     else:
-                        message_data = {'message': f"link invalido {link}", 'level': 'error'}
+                        message_data = {'message': f"invalid url {link}", 'level': 'error'}
                     link_count += 1
                     await queue.put(message_data)
 
-                print(f'Total de links no formato especificado: {link_count}')
-            await queue.put({'message': f"todos os links cadastrados com sucesso {link_count}", 'level': 'error'})
+            await queue.put({'message': f"All links recorded sucessefuly {link_count}", 'level': 'error'})
             return
 
 
@@ -228,7 +211,6 @@ class ALUrlComparerSimilarConsumer(AsyncWebsocketConsumer):
         }))
 
     async def send_feedback_message_level(self, message):
-        # print("message ",message)
         await self.send(text_data=json.dumps({
             'type': message['level'],
             'message': message['message']
